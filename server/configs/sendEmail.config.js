@@ -10,7 +10,7 @@ if (!process.env.RESEND_API_KEY) {
 export const sendEmail = async({sendTo,subject,html})=>{
   try {
     const { data, error } = await resend.emails.send({
-    from: "Blinkit <no-reply@blinkit.com>", // ✅ better than onboarding@resend.dev
+    from: "Blinkit <onboarding@resend.dev>", // ✅ better than onboarding@resend.dev
     to: sendTo,
     subject: subject,
     html: html,
