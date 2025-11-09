@@ -2,10 +2,13 @@ import 'dotenv/config'
 import app from './app.js'
 import http from 'http'
 import connectDB from './configs/db.config.js';
+import connectCloudinary from "./configs/cloudinary.config.js";
 
 const server=http.createServer(app);
 
 const PORT=process.env.PORT || 8080;
+connectCloudinary();
+
 
 // Database connection
 connectDB().then(()=>{
