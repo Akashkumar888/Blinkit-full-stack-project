@@ -4,10 +4,10 @@ import { FaFacebook, FaInstagram, FaLinkedin } from "react-icons/fa";
 const Footer = () => {
   return (
     <footer className="border-t border-gray-200">
-      <div className="container mx-auto px-4 py-6 text-center flex flex-col gap-3">
-        
-        <p className="text-sm text-gray-600">
-          © 2025 Akash Kumar. All Rights Reserved.
+      <div className="container mx-auto px-4 py-6 text-center flex flex-col lg:flex-row lg:justify-between gap-3">
+
+        <p className="text-sm text-gray-600 hover:text-[#ffbf00] transition-colors duration-300">
+          &copy; 2025 Akash Kumar. All Rights Reserved.
         </p>
 
         <div className="flex items-center justify-center gap-5 text-2xl">
@@ -15,8 +15,7 @@ const Footer = () => {
             href="https://facebook.com/"
             target="_blank"
             rel="noopener noreferrer"
-            className="hover:text-primary-200 transition-colors duration-300"
-            aria-label="Facebook"
+            className="text-gray-600 hover:text-[#ffbf00] transition-colors duration-300"
           >
             <FaFacebook />
           </a>
@@ -25,8 +24,7 @@ const Footer = () => {
             href="https://instagram.com/"
             target="_blank"
             rel="noopener noreferrer"
-            className="hover:text-primary-200 transition-colors duration-300"
-            aria-label="Instagram"
+            className="text-gray-600 hover:text-[#ffbf00] transition-colors duration-300"
           >
             <FaInstagram />
           </a>
@@ -35,8 +33,7 @@ const Footer = () => {
             href="https://linkedin.com/in/"
             target="_blank"
             rel="noopener noreferrer"
-            className="hover:text-primary-200 transition-colors duration-300"
-            aria-label="LinkedIn"
+            className="text-gray-600 hover:text-[#ffbf00] transition-colors duration-300"
           >
             <FaLinkedin />
           </a>

@@ -1,12 +1,28 @@
+import { Routes, Route } from "react-router-dom";
+import Home from "../pages/Home";
+import ProtectedRoute from "./ProtectedRoute";
+import SearchPage from "../pages/SearchPage";
 
-import {createBrowserRouter} from "react-router-dom";
-import App from "../App";
+const AppRoutes = () => {
+  return (
+    <Routes>
+      {/* Public Routes */}
+      <Route path="/" element={<Home />} />
+      {/* <Route path="/login" element={<Login />} /> */}
+      <Route path="/search" element={<SearchPage/>}/>
 
-const router=createBrowserRouter([
-  {
-    path:"/",
-    element :<App/>
-  }
-]);
+      {/* Protected User Route */}
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            {/* <Dashboard /> */}
+          </ProtectedRoute>
+        }
+      />
 
-export default router;
+    </Routes>
+  );
+};
+
+export default AppRoutes;

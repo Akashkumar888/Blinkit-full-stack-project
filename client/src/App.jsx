@@ -1,21 +1,21 @@
-import React from 'react'
-import {Routes,Route} from 'react-router-dom'
-import {ToastContainer} from 'react-toastify'
-import Home from './pages/Home'
-import Header from './components/Header'
-import Footer from './components/Footer'
+import { ToastContainer } from "react-toastify";
+
+import Header from "./components/Header";
+import Footer from "./components/Footer";
+import AppRoutes from "./routes";
 
 const App = () => {
   return (
-    <div>
-      <ToastContainer/>
-      <Header/>
-      <Routes>
-        <Route path='/' element={<Home/>}/>
-      </Routes>
-      <Footer/>
-    </div>
-  )
-}
+    <>
+      <ToastContainer />
+      <Header />
+      <main className="min-h-[78vh]">
 
-export default App
+      <AppRoutes />
+      </main>
+      <Footer />
+    </>
+  );
+};
+
+export default App;
