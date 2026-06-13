@@ -1,44 +1,53 @@
 import logo from "../assets/logo.png";
 import Search from "./Search";
-import {Link} from 'react-router-dom'
+import { Link } from "react-router-dom";
+import { FaRegCircleUser } from "react-icons/fa6";
 
 const Header = () => {
   return (
-    <header className="h-20 shadow-md sticky top-0 bg-white z-50">
-      <div className="container mx-auto flex items-center h-full px-4 justify-between">
-        
-        {/* Logo - Left */}
-        <Link to={"/"} className="flex items-center h-full">
+    <header className="h-24 lg:h-20 shadow-md sticky top-0 bg-white z-50">
+      <div className="container mx-auto h-full px-4 flex items-center justify-between">
+
+        {/* Logo */}
+        <Link to="/" className="flex items-center">
           <img
             src={logo}
+            alt="logo"
             width={170}
             height={60}
-            alt="logo"
             className="hidden lg:block"
           />
+
           <img
             src={logo}
-            width={170}
-            height={60}
             alt="logo"
-            className="hidden lg:hidden"
+            width={120}
+            height={40}
+            className="block lg:hidden"
           />
         </Link>
 
-        {/* Search - Center */}
-        <div className="flex-1 flex justify-center px-4">
+        {/* Desktop Search */}
+        <div className="hidden lg:flex flex-1 justify-center px-4">
           <Search />
         </div>
 
-        {/* Login - Right */}
+        {/* User Section */}
         <div className="flex items-center">
-          <button className="text-gray-700 hover:text-primary-200 transition-colors">
-            Login and my cart
+          <button className="text-neutral-600 lg:hidden">
+            <FaRegCircleUser size={26} />
           </button>
-        </div>
 
+          <div className="hidden lg:block text-gray-700 hover:text-yellow-500 transition-colors">
+            Login and My Cart
+          </div>
+        </div>
       </div>
 
+      {/* Mobile Search */}
+      <div className="container mx-auto px-2 lg:hidden">
+        <Search />
+      </div>
     </header>
   );
 };
