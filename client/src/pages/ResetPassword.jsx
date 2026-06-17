@@ -1,23 +1,23 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { Link, useNavigate } from "react-router-dom";
 
 import Axios from "../utils/Axios";
 import SummaryApi from "../common/SummaryApi";
 import AxiosToastError from "../utils/AxiosToastError";
 
-const Register = () => {
+const ResetPassword = () => {
   const navigate = useNavigate();
-
-  const [data, setData] = useState({
-    name: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-  });
+  const location = useLocation();
 
   const [loading, setLoading] = useState(false);
+
+  const [data, setData] = useState({
+    email: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
 
   const [showPassword, setShowPassword] =
     useState(false);
@@ -26,6 +26,18 @@ const Register = () => {
     showConfirmPassword,
     setShowConfirmPassword,
   ] = useState(false);
+
+  useEffect(() => {
+    if (!location?.state?.email) {
+      navigate("/forgot-password");
+      return;
+    }
+
+    setData((prev) => ({
+      ...prev,
+      email: location.state.email,
+    }));
+  }, [location, navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -37,20 +49,23 @@ const Register = () => {
   };
 
   const validValue = Object.values(data).every(
-    (value) => value.trim() !== ""
+    (item) => item.trim() !== ""
   );
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (data.password !== data.confirmPassword) {
+    if (
+      data.newPassword !==
+      data.confirmPassword
+    ) {
       toast.error(
-        "Password and Confirm Password must be same"
+        "New Password and Confirm Password must be same"
       );
       return;
     }
 
-    if (data.password.length < 8) {
+    if (data.newPassword.length < 8) {
       toast.error(
         "Password must be at least 8 characters"
       );
@@ -61,30 +76,34 @@ const Register = () => {
       setLoading(true);
 
       const response = await Axios({
-        ...SummaryApi.register,
+        ...SummaryApi.resetPassword,
         data: {
-          name: data.name.trim(),
-          email: data.email.trim(),
-          password: data.password,
+          email: data.email,
+          newPassword:
+            data.newPassword,
           confirmPassword:
             data.confirmPassword,
         },
       });
 
-      const responseData = response?.data;
+      const responseData =
+        response?.data;
 
       if (responseData?.error) {
-        toast.error(responseData.message);
+        toast.error(
+          responseData.message
+        );
         return;
       }
 
       if (responseData?.success) {
-        toast.success(responseData.message);
+        toast.success(
+          responseData.message
+        );
 
         setData({
-          name: "",
           email: "",
-          password: "",
+          newPassword: "",
           confirmPassword: "",
         });
 
@@ -101,109 +120,51 @@ const Register = () => {
     <section className="w-full container mx-auto px-2">
       <div className="bg-white my-4 w-full max-w-lg mx-auto rounded p-7 shadow-sm">
 
-        <h1 className="text-2xl font-semibold">
-          Create Account
+        <h1 className="text-xl font-semibold">
+          Reset Password
         </h1>
 
-        <p className="text-gray-500 text-sm mt-1">
-          Register to continue shopping.
+        <p className="text-sm text-gray-500 mt-1">
+          Create a new password for
+          your account.
         </p>
 
         <form
-          className="grid gap-4 mt-6"
+          className="grid gap-4 py-4"
           onSubmit={handleSubmit}
         >
-          {/* Name */}
+          {/* New Password */}
           <div className="grid gap-1">
-            <label htmlFor="name">
-              Full Name
+            <label htmlFor="newPassword">
+              New Password
             </label>
 
-            <input
-              id="name"
-              name="name"
-              type="text"
-              autoComplete="name"
-              value={data.name}
-              onChange={handleChange}
-              placeholder="Enter your name"
-              className="
-                bg-blue-50
-                p-2
-                border
-                rounded
-                outline-none
-                focus:border-[#ffbf00]
-              "
-            />
-          </div>
-
-          {/* Email */}
-          <div className="grid gap-1">
-            <label htmlFor="email">
-              Email
-            </label>
-
-            <input
-              id="email"
-              name="email"
-              type="email"
-              autoComplete="email"
-              value={data.email}
-              onChange={handleChange}
-              placeholder="Enter your email"
-              className="
-                bg-blue-50
-                p-2
-                border
-                rounded
-                outline-none
-                focus:border-[#ffbf00]
-              "
-            />
-          </div>
-
-          {/* Password */}
-          <div className="grid gap-1">
-            <label htmlFor="password">
-              Password
-            </label>
-
-            <div
-              className="
-                bg-blue-50
-                p-2
-                border
-                rounded
-                flex
-                items-center
-                focus-within:border-[#ffbf00]
-              "
-            >
+            <div className="bg-blue-50 p-2 border rounded flex items-center focus-within:border-[#ffbf00]">
               <input
-                id="password"
-                name="password"
+                id="newPassword"
+                name="newPassword"
                 type={
                   showPassword
                     ? "text"
                     : "password"
                 }
+                value={
+                  data.newPassword
+                }
+                onChange={
+                  handleChange
+                }
                 autoComplete="new-password"
-                value={data.password}
-                onChange={handleChange}
-                placeholder="Enter your password"
-                className="
-                  w-full
-                  outline-none
-                  bg-transparent
-                "
+                placeholder="Enter new password"
+                className="w-full outline-none bg-transparent"
               />
 
               <button
                 type="button"
                 onClick={() =>
                   setShowPassword(
-                    (prev) => !prev
+                    (prev) =>
+                      !prev
                   )
                 }
               >
@@ -222,17 +183,7 @@ const Register = () => {
               Confirm Password
             </label>
 
-            <div
-              className="
-                bg-blue-50
-                p-2
-                border
-                rounded
-                flex
-                items-center
-                focus-within:border-[#ffbf00]
-              "
-            >
+            <div className="bg-blue-50 p-2 border rounded flex items-center focus-within:border-[#ffbf00]">
               <input
                 id="confirmPassword"
                 name="confirmPassword"
@@ -241,24 +192,25 @@ const Register = () => {
                     ? "text"
                     : "password"
                 }
-                autoComplete="new-password"
                 value={
                   data.confirmPassword
                 }
-                onChange={handleChange}
+                onChange={
+                  handleChange
+                }
+                autoComplete="new-password"
                 placeholder="Confirm password"
-                className="
-                  w-full
-                  outline-none
-                  bg-transparent
-                "
+                className="w-full outline-none bg-transparent"
               />
 
               <button
                 type="button"
                 onClick={() =>
                   setShowConfirmPassword(
-                    (prev) => !prev
+                    (
+                      prev
+                    ) =>
+                      !prev
                   )
                 }
               >
@@ -273,36 +225,35 @@ const Register = () => {
 
           <button
             type="submit"
-            disabled={!validValue || loading}
+            disabled={
+              !validValue ||
+              loading
+            }
             className={`
               text-white
               py-2
               rounded
               font-semibold
-              tracking-wide
               transition-all
               ${
-                validValue && !loading
+                validValue &&
+                !loading
                   ? "bg-green-800 hover:bg-green-700"
                   : "bg-gray-500 cursor-not-allowed"
               }
             `}
           >
             {loading
-              ? "Creating Account..."
-              : "Register"}
+              ? "Updating Password..."
+              : "Change Password"}
           </button>
         </form>
 
-        <p className="mt-5">
-          Already have an account?{" "}
+        <p className="mt-4">
+          Back to{" "}
           <Link
             to="/login"
-            className="
-              font-semibold
-              text-green-700
-              hover:text-green-800
-            "
+            className="font-semibold text-green-700 hover:text-green-800"
           >
             Login
           </Link>
@@ -312,4 +263,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default ResetPassword;
