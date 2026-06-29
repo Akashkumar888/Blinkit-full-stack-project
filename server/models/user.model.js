@@ -13,7 +13,7 @@ password:{
 },
 avatar:{type:String,default:""},
 mobile:{type:Number,default:null},
-refresh_token:{type:String,default:""},
+refreshToken:{type:String,default:""},
 verify_email:{type:Boolean,default:false},
 last_login_date:{type:Date,default:null},
 // refresh_token_expiry: { type: Date, default: null },  // ✅ added standard practice

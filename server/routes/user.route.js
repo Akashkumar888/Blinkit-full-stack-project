@@ -1,9 +1,10 @@
 import express from 'express'
-import { forgotPassowrdController, loginController, logoutController, refreshToken, registerUserController, resetPassword, updateUserDetails, uploadAvatar, verifyEmailController, verifyForgotPasswordOtp } from '../controllers/user.controller.js';
+import { forgotPassowrdController, loginController, logoutController, refreshToken, registerUserController, resetPassword, updateUserDetails, uploadAvatar, userDetails, verifyEmailController, verifyForgotPasswordOtp } from '../controllers/user.controller.js';
 const userRouter=express.Router();
 import {body} from "express-validator"
 import { authUser } from '../middlewares/authUser.middleware.js';
 import upload from '../middlewares/multer.middleware.js';
+
 
 userRouter.post(
   "/register",
@@ -49,5 +50,6 @@ userRouter.put("/forgot-password" ,forgotPassowrdController);
 userRouter.put("/verify-forgot-password-otp" ,verifyForgotPasswordOtp);
 userRouter.put("/reset-password" ,resetPassword);
 userRouter.post("/refresh-token",refreshToken);
+userRouter.get("/user-details", authUser, userDetails);
 export default userRouter;
 

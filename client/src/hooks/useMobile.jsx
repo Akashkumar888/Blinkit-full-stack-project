@@ -1,26 +1,47 @@
+import {
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 
+const useMobile = (
+  breakpoint = 768
+) => {
+  const getIsMobile = () => {
+    if (typeof window === "undefined") {
+      return false;
+    }
 
-import { useEffect, useState } from "react";
+    return window.innerWidth < breakpoint;
+  };
 
-const useMobile = (breakpoint = 768) => {
-  const [isMobile, setIsMobile] = useState(
-    window.innerWidth < breakpoint
-  );
+  const [isMobile, setIsMobile] =
+    useState(getIsMobile);
+
+  const handleResize =
+    useCallback(() => {
+      setIsMobile(getIsMobile());
+    }, [breakpoint]);
 
   useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < breakpoint);
-    };
+    handleResize();
 
-    window.addEventListener("resize", handleResize);
+    window.addEventListener(
+      "resize",
+      handleResize
+    );
 
     return () => {
-      window.removeEventListener("resize", handleResize);
+      window.removeEventListener(
+        "resize",
+        handleResize
+      );
     };
-  }, [breakpoint]);
+  }, [handleResize]);
 
-  return [isMobile];
+  return {
+    isMobile,
+  };
 };
 
 export default useMobile;
-  

@@ -302,6 +302,7 @@ const Register = () => {
               font-semibold
               text-green-700
               hover:text-green-800
+              cursor-pointer
             "
           >
             Login

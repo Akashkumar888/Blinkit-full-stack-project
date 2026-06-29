@@ -1,5 +1,5 @@
 import axios from "axios";
-import { baseURL } from "../common/SummaryApi";
+import SummaryApi, { baseURL } from "../common/SummaryApi";
 
 const Axios = axios.create({
   baseURL,
@@ -52,30 +52,35 @@ Axios.interceptors.response.use(
         localStorage.getItem(
           "refreshToken"
         );
+      
+        if(refreshToken){
+          const newAccessToken=await refreshAccessToken(refreshToken);
 
-      const response = await Axios.post(
-        "/api/user/refresh-token",
-        {
-          refreshToken
+          if(newAccessToken){
+            originalRequest.headers.Authorization=`Bearer ${newAccessToken}`;
+            return Axios(originalRequest);
+          }
         }
-      );
-
-      const newAccessToken =
-        response.data.accessToken;
-
-      localStorage.setItem(
-        "accessToken",
-        newAccessToken
-      );
-
-      originalRequest.headers.Authorization =
-        `Bearer ${newAccessToken}`;
-
-      return Axios(originalRequest);
-    }
-
-    return Promise.reject(error);
+      }
+      return  Promise.reject(error);  
   }
 );
+
+const refreshAccessToken=async(refreshToken)=>{
+  try {
+    const response=await Axios({
+      ...SummaryApi.refreshToken,
+      headers :{
+        Authorization : `Bearer ${refreshToken}`
+      }
+    })
+    const accessToken=response.data.data.accessToken;
+    localStorage.setItem("accessToken",accessToken);
+    return accessToken;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 
 export default Axios;

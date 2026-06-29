@@ -6,9 +6,14 @@ import { Link, useNavigate } from "react-router-dom";
 import Axios from "../utils/Axios";
 import SummaryApi from "../common/SummaryApi";
 import AxiosToastError from "../utils/AxiosToastError";
+import fetchUserDetails from "../utils/fetchUserDetails";
+import { useDispatch } from "react-redux";
+import { setUserDetails } from "../store/userSlice";
 
 const Login = () => {
   const navigate = useNavigate();
+  const dispatch=useDispatch();
+  
 
   const [data, setData] = useState({
     email: "",
@@ -66,15 +71,18 @@ const Login = () => {
         Browser will automatically store cookies.
         */
 
-        // localStorage.setItem(
-        //   "accessToken",
-        //   responseData.data.accessToken
-        // );
+        localStorage.setItem(
+          "accessToken",
+          responseData.data.accessToken
+        );
 
-        // localStorage.setItem(
-        //   "refreshToken",
-        //   responseData.data.refreshToken
-        // );
+        localStorage.setItem(
+          "refreshToken",
+          responseData.data.refreshToken
+        );
+
+        const userDetails=await fetchUserDetails();
+        dispatch(setUserDetails(userDetails.data));
 
         setData({
           email: "",
@@ -233,6 +241,7 @@ const Login = () => {
               font-semibold
               text-green-700
               hover:text-green-800
+              cursor-pointer
             "
           >
             Register
