@@ -1,15 +1,26 @@
+import { configureStore } from "@reduxjs/toolkit";
 
-
-import {configureStore} from '@reduxjs/toolkit'
-import  useReducer  from './userSlice';
-
-
+import userReducer from "./userSlice";
+import productReducer from "./productSlice";
+import cartReducer from "./cartSlice";
+import addressReducer from "./addressSlice";
+import orderReducer from "./orderSlice";
 
 export const store = configureStore({
   reducer: {
-    user : useReducer
-  }
+    user: userReducer,
+    product: productReducer,
+    cartItem: cartReducer,
+    addresses: addressReducer,
+    orders: orderReducer,
+  },
+
+  devTools: import.meta.env.DEV,
+
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false,
+    }),
 });
 
-
-
+export default store;

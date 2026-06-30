@@ -1,46 +1,64 @@
-import React, { useState } from "react";
-import { FaRegEyeSlash, FaRegEye } from "react-icons/fa6";
-import { toast } from "react-toastify";
-import { Link, useNavigate } from "react-router-dom";
+import React, {
+  useCallback,
+  useState,
+} from "react";
+
+import {
+  FaRegEye,
+  FaRegEyeSlash,
+} from "react-icons/fa6";
+
+import toast from "react-hot-toast";
+
+import {
+  Link,
+  useNavigate,
+} from "react-router-dom";
+
+import { useDispatch } from "react-redux";
 
 import Axios from "../utils/Axios";
 import SummaryApi from "../common/SummaryApi";
 import AxiosToastError from "../utils/AxiosToastError";
 import fetchUserDetails from "../utils/fetchUserDetails";
-import { useDispatch } from "react-redux";
+
 import { setUserDetails } from "../store/userSlice";
 
 const Login = () => {
   const navigate = useNavigate();
-  const dispatch=useDispatch();
-  
+  const dispatch = useDispatch();
 
-  const [data, setData] = useState({
+  const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
 
-  const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] =
+    useState(false);
 
-  const handleChange = (e) => {
+  const [loading, setLoading] =
+    useState(false);
+
+  const handleChange = useCallback((e) => {
     const { name, value } = e.target;
 
-    setData((prev) => ({
+    setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
-  };
+  }, []);
 
-  const validValue = Object.values(data).every(
-    (value) => value.trim() !== ""
-  );
+  const isFormValid = Object.values(
+    formData
+  ).every((value) => value.trim() !== "");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!validValue) {
-      toast.error("Please fill all fields");
+    if (!isFormValid) {
+      toast.error(
+        "Please fill all fields."
+      );
       return;
     }
 
@@ -50,41 +68,50 @@ const Login = () => {
       const response = await Axios({
         ...SummaryApi.login,
         data: {
-          email: data.email.trim(),
-          password: data.password,
+          email:
+            formData.email.trim(),
+          password:
+            formData.password,
         },
       });
 
-      const responseData = response?.data;
+      const responseData =
+        response.data;
 
-      if (responseData?.error) {
-        toast.error(responseData.message);
+      if (responseData.error) {
+        toast.error(
+          responseData.message
+        );
         return;
       }
 
-      if (responseData?.success) {
-        toast.success(responseData.message);
-
-        /*
-        If backend sends httpOnly cookies:
-        DON'T save tokens in localStorage.
-        Browser will automatically store cookies.
-        */
+      if (responseData.success) {
+        toast.success(
+          responseData.message
+        );
 
         localStorage.setItem(
           "accessToken",
-          responseData.data.accessToken
+          responseData.data
+            .accessToken
         );
 
         localStorage.setItem(
           "refreshToken",
-          responseData.data.refreshToken
+          responseData.data
+            .refreshToken
         );
 
-        const userDetails=await fetchUserDetails();
-        dispatch(setUserDetails(userDetails.data));
+        const userDetails =
+          await fetchUserDetails();
 
-        setData({
+        dispatch(
+          setUserDetails(
+            userDetails.data
+          )
+        );
+
+        setFormData({
           email: "",
           password: "",
         });
@@ -99,22 +126,24 @@ const Login = () => {
   };
 
   return (
-    <section className="w-full container mx-auto px-2">
-      <div className="bg-white my-4 w-full max-w-lg mx-auto rounded p-7 shadow-sm">
+    <section className="container mx-auto w-full px-2">
+      <div className="mx-auto my-6 w-full max-w-lg rounded bg-white p-7 shadow-sm">
 
-        <h1 className="text-2xl font-semibold mb-2">
+        <h1 className="mb-2 text-2xl font-semibold">
           Login
         </h1>
 
-        <p className="text-gray-500 text-sm mb-4">
-          Welcome back! Please login to continue.
+        <p className="mb-6 text-sm text-gray-500">
+          Welcome back! Please sign in to
+          continue.
         </p>
 
         <form
-          className="grid gap-4"
           onSubmit={handleSubmit}
+          className="grid gap-4"
         >
           {/* Email */}
+
           <div className="grid gap-1">
             <label
               htmlFor="email"
@@ -128,22 +157,24 @@ const Login = () => {
               name="email"
               type="email"
               autoComplete="email"
-              value={data.email}
-              onChange={handleChange}
               placeholder="Enter your email"
+              value={formData.email}
+              onChange={handleChange}
               className="
+                rounded
+                border
                 bg-blue-50
                 p-2
-                border
-                rounded
                 outline-none
-                focus:border-[#ffbf00]
+                focus:border-primary-200
               "
             />
           </div>
 
           {/* Password */}
+
           <div className="grid gap-1">
+
             <label
               htmlFor="password"
               className="font-medium"
@@ -153,13 +184,13 @@ const Login = () => {
 
             <div
               className="
-                bg-blue-50
-                p-2
-                border
-                rounded
                 flex
                 items-center
-                focus-within:border-[#ffbf00]
+                rounded
+                border
+                bg-blue-50
+                p-2
+                focus-within:border-primary-200
               "
             >
               <input
@@ -171,13 +202,13 @@ const Login = () => {
                     : "password"
                 }
                 autoComplete="current-password"
-                value={data.password}
-                onChange={handleChange}
                 placeholder="Enter your password"
+                value={formData.password}
+                onChange={handleChange}
                 className="
                   w-full
-                  outline-none
                   bg-transparent
+                  outline-none
                 "
               />
 
@@ -197,33 +228,37 @@ const Login = () => {
                 )}
               </button>
             </div>
-          </div>
 
-          <Link
-            to="/forgot-password"
-            className="
-              ml-auto
-              text-sm
-              hover:text-[#ffbf00]
-            "
-          >
-            Forgot Password?
-          </Link>
+            <Link
+              to="/forgot-password"
+              className="
+                ml-auto
+                text-sm
+                hover:text-primary-200
+              "
+            >
+              Forgot Password?
+            </Link>
+
+          </div>
 
           <button
             type="submit"
-            disabled={!validValue || loading}
+            disabled={
+              !isFormValid || loading
+            }
             className={`
-              text-white
-              py-2
               rounded
+              py-2
               font-semibold
               tracking-wide
+              text-white
               transition-all
               ${
-                validValue && !loading
+                isFormValid &&
+                !loading
                   ? "bg-green-800 hover:bg-green-700"
-                  : "bg-gray-500 cursor-not-allowed"
+                  : "cursor-not-allowed bg-gray-500"
               }
             `}
           >
@@ -233,7 +268,7 @@ const Login = () => {
           </button>
         </form>
 
-        <p className="mt-5">
+        <p className="mt-5 text-sm">
           Don't have an account?{" "}
           <Link
             to="/register"
@@ -241,12 +276,12 @@ const Login = () => {
               font-semibold
               text-green-700
               hover:text-green-800
-              cursor-pointer
             "
           >
             Register
           </Link>
         </p>
+
       </div>
     </section>
   );

@@ -1,20 +1,40 @@
+import React from "react";
+import { IoClose } from "react-icons/io5";
+import { useNavigate } from "react-router-dom";
 
-import React from 'react'
-import UserMenu from '../components/UserMenu'
-import { IoClose } from 'react-icons/io5'
+import UserMenu from "../components/UserMenu";
 
 const UserMenuMobile = () => {
+  const navigate = useNavigate();
+
+  const handleClose = () => {
+    navigate(-1);
+  };
+
   return (
-    <section className='bg-white h-full w-full py-2'>
-      <button onClick={()=>window.history.back()} className='text-neutral-800 block w-fit ml-auto'>
-        <IoClose size={25}/>
-      </button>
-      <div className='container mx-auto px-3 pb-8'>
+    <section className="min-h-screen bg-white">
 
-      <UserMenu />
+      {/* Header */}
+      <div className="flex items-center justify-end border-b p-3">
+
+        <button
+          type="button"
+          onClick={handleClose}
+          className="rounded p-1 text-neutral-700 transition hover:bg-gray-100 hover:text-red-500"
+          aria-label="Close Menu"
+        >
+          <IoClose size={24} />
+        </button>
+
       </div>
-    </section>
-  )
-}
 
-export default UserMenuMobile
+      {/* User Menu */}
+      <div className="container mx-auto px-4 py-5">
+        <UserMenu />
+      </div>
+
+    </section>
+  );
+};
+
+export default UserMenuMobile;

@@ -1,7 +1,7 @@
-import React, { useState } from "react";
-import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
-import { toast } from "react-toastify";
+import React, { useCallback, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
+import toast from "react-hot-toast";
 
 import Axios from "../utils/Axios";
 import SummaryApi from "../common/SummaryApi";
@@ -10,137 +10,122 @@ import AxiosToastError from "../utils/AxiosToastError";
 const Register = () => {
   const navigate = useNavigate();
 
-  const [data, setData] = useState({
+  const [loading, setLoading] = useState(false);
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] =
+    useState(false);
+
+  const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
     confirmPassword: "",
   });
 
-  const [loading, setLoading] = useState(false);
-
-  const [showPassword, setShowPassword] =
-    useState(false);
-
-  const [
-    showConfirmPassword,
-    setShowConfirmPassword,
-  ] = useState(false);
-
-  const handleChange = (e) => {
+  const handleChange = useCallback((e) => {
     const { name, value } = e.target;
 
-    setData((prev) => ({
+    setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
-  };
+  }, []);
 
-  const validValue = Object.values(data).every(
-    (value) => value.trim() !== ""
-  );
+  const isValid =
+    Object.values(formData).every(Boolean);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = useCallback(
+    async (e) => {
+      e.preventDefault();
 
-    if (data.password !== data.confirmPassword) {
-      toast.error(
-        "Password and Confirm Password must be same"
-      );
-      return;
-    }
-
-    if (data.password.length < 8) {
-      toast.error(
-        "Password must be at least 8 characters"
-      );
-      return;
-    }
-
-    try {
-      setLoading(true);
-
-      const response = await Axios({
-        ...SummaryApi.register,
-        data: {
-          name: data.name.trim(),
-          email: data.email.trim(),
-          password: data.password,
-          confirmPassword:
-            data.confirmPassword,
-        },
-      });
-
-      const responseData = response?.data;
-
-      if (responseData?.error) {
-        toast.error(responseData.message);
+      if (
+        formData.password !== formData.confirmPassword
+      ) {
+        toast.error(
+          "Password and Confirm Password must be the same."
+        );
         return;
       }
 
-      if (responseData?.success) {
-        toast.success(responseData.message);
+      try {
+        setLoading(true);
 
-        setData({
-          name: "",
-          email: "",
-          password: "",
-          confirmPassword: "",
+        const response = await Axios({
+          ...SummaryApi.register,
+          data: formData,
         });
 
-        navigate("/login");
+        const { data: responseData } = response;
+
+        if (responseData.success) {
+          toast.success(responseData.message);
+
+          setFormData({
+            name: "",
+            email: "",
+            password: "",
+            confirmPassword: "",
+          });
+
+          navigate("/login");
+        }
+      } catch (error) {
+        AxiosToastError(error);
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      AxiosToastError(error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    },
+    [formData, navigate]
+  );
 
   return (
-    <section className="w-full container mx-auto px-2">
-      <div className="bg-white my-4 w-full max-w-lg mx-auto rounded p-7 shadow-sm">
+    <section className="container mx-auto w-full px-2">
+      <div className="bg-white rounded p-7 my-4 mx-auto w-full max-w-lg">
 
-        <h1 className="text-2xl font-semibold">
-          Create Account
-        </h1>
+        <h2 className="text-2xl font-semibold">
+          Welcome to Binkeyit
+        </h2>
 
-        <p className="text-gray-500 text-sm mt-1">
-          Register to continue shopping.
+        <p className="text-neutral-500 mt-1">
+          Create your account to continue.
         </p>
 
         <form
-          className="grid gap-4 mt-6"
           onSubmit={handleSubmit}
+          className="grid gap-5 mt-6"
         >
+
           {/* Name */}
+
           <div className="grid gap-1">
-            <label htmlFor="name">
-              Full Name
+            <label
+              htmlFor="name"
+              className="font-medium"
+            >
+              Name
             </label>
 
             <input
               id="name"
               name="name"
               type="text"
-              autoComplete="name"
-              value={data.name}
+              autoFocus
+              required
+              value={formData.name}
               onChange={handleChange}
               placeholder="Enter your name"
-              className="
-                bg-blue-50
-                p-2
-                border
-                rounded
-                outline-none
-                focus:border-[#ffbf00]
-              "
+              className="bg-blue-50 border rounded p-2 outline-none focus:border-primary-200"
             />
           </div>
 
           {/* Email */}
+
           <div className="grid gap-1">
-            <label htmlFor="email">
+            <label
+              htmlFor="email"
+              className="font-medium"
+            >
               Email
             </label>
 
@@ -148,64 +133,45 @@ const Register = () => {
               id="email"
               name="email"
               type="email"
-              autoComplete="email"
-              value={data.email}
+              required
+              value={formData.email}
               onChange={handleChange}
               placeholder="Enter your email"
-              className="
-                bg-blue-50
-                p-2
-                border
-                rounded
-                outline-none
-                focus:border-[#ffbf00]
-              "
+              className="bg-blue-50 border rounded p-2 outline-none focus:border-primary-200"
             />
           </div>
 
           {/* Password */}
+
           <div className="grid gap-1">
-            <label htmlFor="password">
+            <label
+              htmlFor="password"
+              className="font-medium"
+            >
               Password
             </label>
 
-            <div
-              className="
-                bg-blue-50
-                p-2
-                border
-                rounded
-                flex
-                items-center
-                focus-within:border-[#ffbf00]
-              "
-            >
+            <div className="bg-blue-50 border rounded flex items-center px-2 focus-within:border-primary-200">
+
               <input
                 id="password"
                 name="password"
                 type={
-                  showPassword
-                    ? "text"
-                    : "password"
+                  showPassword ? "text" : "password"
                 }
-                autoComplete="new-password"
-                value={data.password}
+                required
+                value={formData.password}
                 onChange={handleChange}
                 placeholder="Enter your password"
-                className="
-                  w-full
-                  outline-none
-                  bg-transparent
-                "
+                className="w-full bg-transparent outline-none py-2"
               />
 
               <button
                 type="button"
                 onClick={() =>
-                  setShowPassword(
-                    (prev) => !prev
-                  )
+                  setShowPassword((prev) => !prev)
                 }
+                className="cursor-pointer text-neutral-600"
               >
                 {showPassword ? (
                   <FaRegEye />
@@ -213,26 +179,22 @@ const Register = () => {
                   <FaRegEyeSlash />
                 )}
               </button>
+
             </div>
           </div>
 
           {/* Confirm Password */}
+
           <div className="grid gap-1">
-            <label htmlFor="confirmPassword">
+            <label
+              htmlFor="confirmPassword"
+              className="font-medium"
+            >
               Confirm Password
             </label>
 
-            <div
-              className="
-                bg-blue-50
-                p-2
-                border
-                rounded
-                flex
-                items-center
-                focus-within:border-[#ffbf00]
-              "
-            >
+            <div className="bg-blue-50 border rounded flex items-center px-2 focus-within:border-primary-200">
+
               <input
                 id="confirmPassword"
                 name="confirmPassword"
@@ -241,17 +203,11 @@ const Register = () => {
                     ? "text"
                     : "password"
                 }
-                autoComplete="new-password"
-                value={
-                  data.confirmPassword
-                }
+                required
+                value={formData.confirmPassword}
                 onChange={handleChange}
-                placeholder="Confirm password"
-                className="
-                  w-full
-                  outline-none
-                  bg-transparent
-                "
+                placeholder="Confirm your password"
+                className="w-full bg-transparent outline-none py-2"
               />
 
               <button
@@ -261,6 +217,7 @@ const Register = () => {
                     (prev) => !prev
                   )
                 }
+                className="cursor-pointer text-neutral-600"
               >
                 {showConfirmPassword ? (
                   <FaRegEye />
@@ -268,46 +225,44 @@ const Register = () => {
                   <FaRegEyeSlash />
                 )}
               </button>
+
             </div>
           </div>
 
+          {/* Submit */}
+
           <button
             type="submit"
-            disabled={!validValue || loading}
+            disabled={!isValid || loading}
             className={`
-              text-white
               py-2
               rounded
               font-semibold
               tracking-wide
-              transition-all
+              text-white
+              transition
               ${
-                validValue && !loading
+                isValid && !loading
                   ? "bg-green-800 hover:bg-green-700"
                   : "bg-gray-500 cursor-not-allowed"
               }
             `}
           >
-            {loading
-              ? "Creating Account..."
-              : "Register"}
+            {loading ? "Creating Account..." : "Register"}
           </button>
+
         </form>
 
-        <p className="mt-5">
+        <p className="mt-5 text-sm">
           Already have an account?{" "}
           <Link
             to="/login"
-            className="
-              font-semibold
-              text-green-700
-              hover:text-green-800
-              cursor-pointer
-            "
+            className="font-semibold text-green-700 hover:text-green-800"
           >
             Login
           </Link>
         </p>
+
       </div>
     </section>
   );

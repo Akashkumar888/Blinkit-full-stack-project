@@ -1,150 +1,224 @@
+import React, {
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
+import { FaRegUserCircle } from "react-icons/fa";
+import { useDispatch, useSelector } from "react-redux";
+import toast from "react-hot-toast";
 
-import React, { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { FaRegUserCircle } from 'react-icons/fa';
-import UserProfileAvatarEdit from '../components/UserProfileAvatarEdit';
-import e from 'express';
-import Axios from '../utils/Axios';
-import SummaryApi from '../common/SummaryApi';
-import AxiosToastError from '../utils/AxiosToastError';
-import { toast } from 'react-toastify';
-import fetchUserDetails from '../utils/fetchUserDetails';
-import { setUserDetails } from '../store/userSlice';
+import Axios from "../utils/Axios";
+import SummaryApi from "../common/SummaryApi";
+import AxiosToastError from "../utils/AxiosToastError";
+import fetchUserDetails from "../utils/fetchUserDetails";
+
+import UserProfileAvatarEdit from "../components/UserProfileAvatarEdit";
+import { setUserDetails } from "../store/userSlice";
 
 const Profile = () => {
+  const user = useSelector((state) => state.user);
+  const dispatch = useDispatch();
 
-  const user=useSelector((state) => state.user);
-  const [openProfileAvatarEdit,setOpenProfileAvatarEdit]=useState(false);
-  const [loading,setLoading]=useState(false);
-  const dispatch=useDispatch();
+  const [openProfileAvatarEdit, setOpenProfileAvatarEdit] =
+    useState(false);
 
+  const [loading, setLoading] = useState(false);
 
-  const [userData,setUserData]=useState({
-    name:user.name,
-    email:user.email,
-    mobile:user.mobile
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    mobile: "",
   });
 
+  useEffect(() => {
+    setFormData({
+      name: user?.name || "",
+      email: user?.email || "",
+      mobile: user?.mobile || "",
+    });
+  }, [user]);
 
-  useEffect(()=>{
-   setUserData({
-    name:user.name,
-    email:user.email,
-    mobile:user.mobile
-   })
+  const handleChange = (e) => {
+    const { name, value } = e.target;
 
-  },[user]);
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
 
+  const handleSubmit = useCallback(
+    async (e) => {
+      e.preventDefault();
 
-  const handleOnChange=()=>{
-    const {name,value}=e.target;
+      try {
+        setLoading(true);
 
-    setUserData((prev)=>{
-      return {
-        ...prev,
-        [name]:value
+        const response = await Axios({
+          ...SummaryApi.updateUserDetails,
+          data: formData,
+        });
+
+        const { data: responseData } = response;
+
+        if (responseData.success) {
+          toast.success(responseData.message);
+
+          const latestUser = await fetchUserDetails();
+
+          dispatch(setUserDetails(latestUser.data));
+        }
+      } catch (error) {
+        AxiosToastError(error);
+      } finally {
+        setLoading(false);
       }
-    })
-  }
-
-  const handleSubmit=async(e)=>{
-    e.preventDefault();
-    try {
-      setLoading(true);
-      
-      const response=await Axios({
-        ...SummaryApi.updateUserDetails,
-        data: userData,
-      });
-      const {data : responseData}=response;
-
-      if(responseData.success){
-        toast.success(responseData.message);
-        const userData=await fetchUserDetails();
-            dispatch(setUserDetails(userData.data));
-      }
-  
-    } catch (error) {
-      AxiosToastError(error);
-    }
-    finally{
-      setLoading(false);
-    }
-  }
+    },
+    [dispatch, formData]
+  );
 
   return (
-    <div>
+    <section className="p-4">
 
+      {/* Avatar */}
 
+      <div className="flex flex-col items-start gap-3">
 
-      <div className='w-20 h-20 bg-red-500 flex items-center justify-center rounded-full overflow-hidden drop-shadow-sm'>
-        {
-          user.avatar ? (
-            <img src={user.avatar} alt={user.name} className='w-full h-full'/>
+        <div className="w-20 h-20 rounded-full overflow-hidden bg-slate-100 flex items-center justify-center shadow">
+
+          {user?.avatar ? (
+            <img
+              src={user.avatar}
+              alt={user.name}
+              className="w-full h-full object-cover"
+            />
           ) : (
-            
-            <FaRegUserCircle size={60}/>
-          )
-        }
+            <FaRegUserCircle
+              size={65}
+              className="text-slate-500"
+            />
+          )}
+
+        </div>
+
+        <button
+          type="button"
+          onClick={() => setOpenProfileAvatarEdit(true)}
+          className="border border-primary-100 hover:border-primary-200 hover:bg-primary-200 hover:text-black rounded-full px-4 py-1 text-sm transition"
+        >
+          Edit Avatar
+        </button>
+
       </div>
-      <button onClick={()=>setOpenProfileAvatarEdit(true)} className='text-sm min-w-20 border border-[#ffbf00]
-      hover:border-[#ffbf00] hover:bg-[#ffbf00] px-3 py-1 rounded-full mt-3'>Edit</button>
 
-    
-     {
-      openProfileAvatarEdit && (
-        <UserProfileAvatarEdit close={()=>setOpenProfileAvatarEdit(false)}/>
-      )
-     }
+      {/* Edit Avatar Modal */}
 
-    {/* name mobile email change password  */}
-    <form action="" className='my-4 grid gap-4' onSubmit={handleSubmit}>
-      <div className='grid'>
-        <label htmlFor="name">Name</label>
-        <input type="text" placeholder='Enter your name'
-        className='p-2 bg-blue-50 outline-[#ffbf00] border focus-within:border-[#ffbf00] rounded'
-        value={userData.name}
-        name='name'
-        id='name'
-        onChange={handleOnChange}
-        required
+      {openProfileAvatarEdit && (
+        <UserProfileAvatarEdit
+          close={() => setOpenProfileAvatarEdit(false)}
         />
-      </div>
+      )}
 
-      <div className='grid'>
-        <label htmlFor="email">Email</label>
-        <input type="email" placeholder='Enter your email'
-        className='p-2 bg-blue-50 outline-[#ffbf00] border focus-within:border-[#ffbf00] rounded'
-        value={userData.email}
-        name='email'
-        id='email'
-        onChange={handleOnChange}
-        required
-        />
-      </div>
+      {/* Profile Form */}
 
+      <form
+        onSubmit={handleSubmit}
+        className="grid gap-5 mt-6"
+      >
 
-      <div className='grid'>
-        <label htmlFor="mobile">Mobile</label>
-        <input type="number" placeholder='Enter your Mobile'
-        className='p-2 bg-blue-50 outline-[#ffbf00] border focus-within:border-[#ffbf00] rounded'
-        value={userData.mobile}
-        name='mobile'
-        id='mobile'
-        onChange={handleOnChange}
-        required
-        />
-      </div>
+        {/* Name */}
 
-    <button className='border px-4 py-2 font-semibold hover:bg-[#ffbf00] border-[#ffbf00] text-[#ffbf00] hover:text-neutral-800 rounded'>
-      {
-        loading ? "Loading..." : "Submit"
-      }
-       </button>
-    </form>
+        <div className="grid gap-1">
+          <label
+            htmlFor="name"
+            className="font-medium"
+          >
+            Name
+          </label>
 
-    </div>
-  )
-}
+          <input
+            id="name"
+            name="name"
+            type="text"
+            placeholder="Enter your name"
+            value={formData.name}
+            onChange={handleChange}
+            required
+            className="bg-blue-50 border rounded p-2 outline-none focus:border-primary-200"
+          />
+        </div>
 
-export default Profile
+        {/* Email */}
+
+        <div className="grid gap-1">
+          <label
+            htmlFor="email"
+            className="font-medium"
+          >
+            Email
+          </label>
+
+          <input
+            id="email"
+            name="email"
+            type="email"
+            placeholder="Enter your email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+            className="bg-blue-50 border rounded p-2 outline-none focus:border-primary-200"
+          />
+        </div>
+
+        {/* Mobile */}
+
+        <div className="grid gap-1">
+          <label
+            htmlFor="mobile"
+            className="font-medium"
+          >
+            Mobile
+          </label>
+
+          <input
+            id="mobile"
+            name="mobile"
+            type="text"
+            placeholder="Enter your mobile number"
+            value={formData.mobile}
+            onChange={handleChange}
+            required
+            className="bg-blue-50 border rounded p-2 outline-none focus:border-primary-200"
+          />
+        </div>
+
+        {/* Submit */}
+
+        <button
+          type="submit"
+          disabled={loading}
+          className={`
+            border
+            border-primary-100
+            rounded
+            px-4
+            py-2
+            font-semibold
+            transition
+            ${
+              loading
+                ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                : "hover:bg-primary-100 text-primary-200 hover:text-black"
+            }
+          `}
+        >
+          {loading ? "Updating..." : "Update Profile"}
+        </button>
+
+      </form>
+
+    </section>
+  );
+};
+
+export default Profile;

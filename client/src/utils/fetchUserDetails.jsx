@@ -1,18 +1,23 @@
+import Axios from "./Axios";
+import AxiosToastError from "./AxiosToastError";
+import SummaryApi from "../common/SummaryApi";
 
-import React from 'react'
-import Axios from './Axios'
-import SummaryApi from '../common/SummaryApi'
-
-const fetchUserDetails =async () => {
+/**
+ * Fetch logged-in user details.
+ *
+ * @returns {Promise<Object|null>}
+ */
+const fetchUserDetails = async () => {
   try {
-    const response=await Axios({
-      ...SummaryApi.userDetails
+    const { data } = await Axios({
+      ...SummaryApi.userDetails,
     });
-    return response.data;
-  } catch (error) {
-    console.log(error);
-  }
-  
-}
 
-export default fetchUserDetails
+    return data;
+  } catch (error) {
+    AxiosToastError(error);
+    return null;
+  }
+};
+
+export default fetchUserDetails;
