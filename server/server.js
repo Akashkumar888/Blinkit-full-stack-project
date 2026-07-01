@@ -1,19 +1,83 @@
-import 'dotenv/config'
-import app from './app.js'
-import http from 'http'
-import connectDB from './configs/db.config.js';
+import "dotenv/config";
+
+import http from "http";
+
+import app from "./app.js";
+
+import connectDB from "./configs/db.config.js";
 import connectCloudinary from "./configs/cloudinary.config.js";
 
-const server=http.createServer(app);
+const PORT = process.env.PORT || 3000;
 
-const PORT=process.env.PORT || 3000;
-connectCloudinary();
+const server = http.createServer(app);
 
+/* ==========================================================
+   Start Server
+========================================================== */
 
-// Database connection
-connectDB().then(()=>{
-  server.listen(PORT,()=>{
-    console.log(`Server is running on port: http://localhost:${PORT}`)
+const startServer = async () => {
+  try {
+    await connectDB();
+    await connectCloudinary();
+
+    server.listen(PORT, () => {
+      console.log(`
+==========================================================
+🚀 Blinkit Server Started Successfully
+
+Environment : ${process.env.NODE_ENV || "development"}
+
+Server      : http://localhost:${PORT}
+
+==========================================================
+`);
+    });
+  } catch (error) {
+    console.error("Server Startup Failed");
+    console.error(error);
+
+    process.exit(1);
+  }
+};
+
+startServer();
+
+/* ==========================================================
+   Graceful Shutdown
+========================================================== */
+
+process.on("SIGINT", () => {
+  console.log("\nShutting down server...");
+
+  server.close(() => {
+    console.log("HTTP Server Closed");
+    process.exit(0);
   });
+});
 
-})
+process.on("SIGTERM", () => {
+  console.log("\nSIGTERM received.");
+
+  server.close(() => {
+    console.log("HTTP Server Closed");
+    process.exit(0);
+  });
+});
+
+/* ==========================================================
+   Handle Unhandled Errors
+========================================================== */
+
+process.on("uncaughtException", (error) => {
+  console.error("Uncaught Exception");
+  console.error(error);
+
+  process.exit(1);
+});
+
+process.on("unhandledRejection", (reason) => {
+  console.error("Unhandled Promise Rejection");
+  console.error(reason);
+
+  process.exit(1);
+});
