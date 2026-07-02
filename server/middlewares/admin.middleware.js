@@ -1,4 +1,3 @@
-
 import UserModel from "../models/user.model.js";
 
 /**
@@ -15,7 +14,7 @@ import UserModel from "../models/user.model.js";
 
 const admin = async (req, res, next) => {
   try {
-    const userId = req.userId;
+    const userId = req.user?._id || req.user?.id || req.userId;
 
     // Authentication check
     if (!userId) {

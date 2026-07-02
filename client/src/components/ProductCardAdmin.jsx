@@ -1,9 +1,4 @@
-
-import React, {
-  memo,
-  useCallback,
-  useState,
-} from "react";
+import React, { memo, useCallback, useState } from "react";
 
 import toast from "react-hot-toast";
 
@@ -12,21 +7,15 @@ import SummaryApi from "../common/SummaryApi";
 import AxiosToastError from "../utils/AxiosToastError";
 
 import EditProductAdmin from "./EditProductAdmin";
-import CofirmBox from "./CofirmBox";
+import ConfirmBox from "./ConfirmBox";
 import Loading from "./Loading";
 
-const ProductCardAdmin = ({
-  data,
-  fetchProductData,
-}) => {
-  const [openEdit, setOpenEdit] =
-    useState(false);
+const ProductCardAdmin = ({ data, fetchProductData }) => {
+  const [openEdit, setOpenEdit] = useState(false);
 
-  const [openDelete, setOpenDelete] =
-    useState(false);
+  const [openDelete, setOpenDelete] = useState(false);
 
-  const [loading, setLoading] =
-    useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleOpenEdit = useCallback(() => {
     setOpenEdit(true);
@@ -36,49 +25,40 @@ const ProductCardAdmin = ({
     setOpenEdit(false);
   }, []);
 
-  const handleOpenDelete =
-    useCallback(() => {
-      setOpenDelete(true);
-    }, []);
+  const handleOpenDelete = useCallback(() => {
+    setOpenDelete(true);
+  }, []);
 
-  const handleCloseDelete =
-    useCallback(() => {
-      setOpenDelete(false);
-    }, []);
+  const handleCloseDelete = useCallback(() => {
+    setOpenDelete(false);
+  }, []);
 
-  const handleDelete =
-    useCallback(async () => {
-      try {
-        setLoading(true);
+  const handleDelete = useCallback(async () => {
+    try {
+      setLoading(true);
 
-        const response = await Axios({
-          ...SummaryApi.deleteProduct,
-          data: {
-            _id: data?._id,
-          },
-        });
+      const response = await Axios({
+        ...SummaryApi.deleteProduct,
+        data: {
+          _id: data?._id,
+        },
+      });
 
-        const responseData =
-          response?.data;
+      const responseData = response?.data;
 
-        if (responseData?.success) {
-          toast.success(
-            responseData.message
-          );
+      if (responseData?.success) {
+        toast.success(responseData.message);
 
-          fetchProductData?.();
+        fetchProductData?.();
 
-          setOpenDelete(false);
-        }
-      } catch (error) {
-        AxiosToastError(error);
-      } finally {
-        setLoading(false);
+        setOpenDelete(false);
       }
-    }, [
-      data?._id,
-      fetchProductData,
-    ]);
+    } catch (error) {
+      AxiosToastError(error);
+    } finally {
+      setLoading(false);
+    }
+  }, [data?._id, fetchProductData]);
 
   return (
     <>
@@ -127,9 +107,7 @@ const ProductCardAdmin = ({
           {data?.name}
         </h3>
 
-        <p className="text-sm text-neutral-500">
-          {data?.unit}
-        </p>
+        <p className="text-sm text-neutral-500">{data?.unit}</p>
 
         <div
           className="
@@ -183,9 +161,7 @@ const ProductCardAdmin = ({
         <EditProductAdmin
           data={data}
           close={handleCloseEdit}
-          fetchProductData={
-            fetchProductData
-          }
+          fetchProductData={fetchProductData}
         />
       )}
 

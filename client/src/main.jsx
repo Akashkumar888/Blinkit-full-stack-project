@@ -4,24 +4,16 @@ import "./index.css";
 
 import { RouterProvider } from "react-router-dom";
 import router from "./routes";
-import {Provider} from 'react-redux'
+import { Provider } from "react-redux";
 import { store } from "./store/store";
 
-
 ReactDOM.createRoot(document.getElementById("root")).render(
-
-    <Provider store={store}>
-
+  <Provider store={store}>
     <RouterProvider router={router} />
-
-    </Provider>
+  </Provider>,
 );
 
-{/* <StrictMode>
-  All things runs two times because of strictMode
-</StrictMode> */}
-
-// 🔍 What is StrictMode in React?
+// StrictMode is a development-only tool provided by React to detect side effects
 // StrictMode is a development-only tool provided by React to:
 // Detect side effects
 // Warn about unsafe lifecycle methods

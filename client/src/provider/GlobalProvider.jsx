@@ -1,4 +1,3 @@
-
 import {
   createContext,
   useCallback,
@@ -14,8 +13,8 @@ import SummaryApi from "../common/SummaryApi";
 import AxiosToastError from "../utils/AxiosToastError";
 import { pricewithDiscount } from "../utils/PriceWithDiscount";
 
-import { handleAddItemCart } from "../store/cartProduct";
-import { handleAddAddress } from "../store/addressSlice";
+import { setCartItems } from "../store/cartSlice";
+import { setAddressList } from "../store/addressSlice";
 import { setOrder } from "../store/orderSlice";
 
 export const GlobalContext = createContext(null);
@@ -39,7 +38,7 @@ const GlobalProvider = ({ children }) => {
       const { data: responseData } = response;
 
       if (responseData.success) {
-        dispatch(handleAddItemCart(responseData.data));
+        dispatch(setCartItems(responseData.data));
       }
     } catch (error) {
       AxiosToastError(error);
@@ -68,7 +67,7 @@ const GlobalProvider = ({ children }) => {
         return null;
       }
     },
-    [fetchCartItem]
+    [fetchCartItem],
   );
 
   const deleteCartItem = useCallback(
@@ -91,7 +90,7 @@ const GlobalProvider = ({ children }) => {
         AxiosToastError(error);
       }
     },
-    [fetchCartItem]
+    [fetchCartItem],
   );
 
   /* ================= Address ================= */
@@ -105,7 +104,7 @@ const GlobalProvider = ({ children }) => {
       const { data: responseData } = response;
 
       if (responseData.success) {
-        dispatch(handleAddAddress(responseData.data));
+        dispatch(setAddressList(responseData.data));
       }
     } catch (error) {
       AxiosToastError(error);
@@ -135,7 +134,7 @@ const GlobalProvider = ({ children }) => {
   const handleLogout = useCallback(() => {
     localStorage.clear();
 
-    dispatch(handleAddItemCart([]));
+    dispatch(setCartItems([]));
     dispatch(handleAddAddress([]));
     dispatch(setOrder([]));
   }, [dispatch]);
@@ -143,17 +142,14 @@ const GlobalProvider = ({ children }) => {
   /* ================= Derived Values ================= */
 
   const totalQty = useMemo(() => {
-    return cartItem.reduce(
-      (total, item) => total + item.quantity,
-      0
-    );
+    return cartItem.reduce((total, item) => total + item.quantity, 0);
   }, [cartItem]);
 
   const totalPrice = useMemo(() => {
     return cartItem.reduce((total, item) => {
       const price = pricewithDiscount(
         item.productId?.price,
-        item.productId?.discount
+        item.productId?.discount,
       );
 
       return total + price * item.quantity;
@@ -177,13 +173,7 @@ const GlobalProvider = ({ children }) => {
     fetchCartItem();
     fetchAddress();
     fetchOrder();
-  }, [
-    user?._id,
-    fetchCartItem,
-    fetchAddress,
-    fetchOrder,
-    handleLogout,
-  ]);
+  }, [user?._id, fetchCartItem, fetchAddress, fetchOrder, handleLogout]);
 
   return (
     <GlobalContext.Provider

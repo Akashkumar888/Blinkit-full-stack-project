@@ -1,10 +1,4 @@
-
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { createColumnHelper } from "@tanstack/react-table";
 import { HiPencil } from "react-icons/hi";
 import { MdDelete } from "react-icons/md";
@@ -18,7 +12,7 @@ import DisplayTable from "../components/DisplayTable";
 import UploadSubCategoryModel from "../components/UploadSubCategoryModel";
 import EditSubCategory from "../components/EditSubCategory";
 import ViewImage from "../components/ViewImage";
-import CofirmBox from "../components/CofirmBox";
+import ConfirmBox from "../components/ConfirmBox";
 import Loading from "../components/Loading";
 import NoData from "../components/NoData";
 
@@ -128,7 +122,6 @@ const SubCategoryPage = () => {
         header: "Action",
         cell: ({ row }) => (
           <div className="flex justify-center gap-3">
-
             <button
               onClick={() => {
                 setEditData(row.original);
@@ -148,24 +141,19 @@ const SubCategoryPage = () => {
             >
               <MdDelete size={18} />
             </button>
-
           </div>
         ),
       }),
     ],
-    []
+    [],
   );
 
   return (
     <section>
-
       {/* Header */}
 
       <div className="bg-white shadow-md p-3 flex items-center justify-between">
-
-        <h2 className="text-lg font-semibold">
-          Sub Categories
-        </h2>
+        <h2 className="text-lg font-semibold">Sub Categories</h2>
 
         <button
           onClick={() => setOpenAddModal(true)}
@@ -173,28 +161,20 @@ const SubCategoryPage = () => {
         >
           Add Sub Category
         </button>
-
       </div>
 
       {/* Content */}
 
       <div className="p-4">
-
         {loading ? (
           <Loading />
         ) : subCategories.length === 0 ? (
           <NoData />
         ) : (
           <div className="overflow-x-auto">
-
-            <DisplayTable
-              data={subCategories}
-              column={columns}
-            />
-
+            <DisplayTable data={subCategories} column={columns} />
           </div>
         )}
-
       </div>
 
       {/* Add */}
@@ -221,12 +201,7 @@ const SubCategoryPage = () => {
 
       {/* Image */}
 
-      {imageURL && (
-        <ViewImage
-          url={imageURL}
-          close={() => setImageURL("")}
-        />
-      )}
+      {imageURL && <ViewImage url={imageURL} close={() => setImageURL("")} />}
 
       {/* Delete */}
 
@@ -243,7 +218,6 @@ const SubCategoryPage = () => {
           confirm={handleDeleteSubCategory}
         />
       )}
-
     </section>
   );
 };

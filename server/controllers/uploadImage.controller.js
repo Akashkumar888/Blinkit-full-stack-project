@@ -1,5 +1,4 @@
-
-import uploadImageCloudinary from "../utils/uploadImageClodinary.js";
+import uploadImageCloudinary from "../utils/uploadImageCloudinary.util.js";
 
 /**
  * ==========================================================

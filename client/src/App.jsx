@@ -3,11 +3,9 @@ import { Outlet, useLocation } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { useDispatch } from "react-redux";
 
-import "./App.css";
-
 import Header from "./components/Header";
 import Footer from "./components/Footer";
-import CartMobileLink from "./components/CartMobile";
+import CartMobileLink from "./components/CartMobileLink";
 
 import GlobalProvider from "./provider/GlobalProvider";
 
@@ -17,9 +15,7 @@ import fetchUserDetails from "./utils/fetchUserDetails";
 
 import SummaryApi from "./common/SummaryApi";
 
-import {
-  setUserDetails,
-} from "./store/userSlice";
+import { setUserDetails } from "./store/userSlice";
 
 import {
   setAllCategory,
@@ -59,7 +55,7 @@ function App() {
 
       if (data.success) {
         const sortedCategories = [...data.data].sort((a, b) =>
-          a.name.localeCompare(b.name)
+          a.name.localeCompare(b.name),
         );
 
         dispatch(setAllCategory(sortedCategories));
@@ -82,7 +78,7 @@ function App() {
 
       if (data.success) {
         const sortedSubCategories = [...data.data].sort((a, b) =>
-          a.name.localeCompare(b.name)
+          a.name.localeCompare(b.name),
         );
 
         dispatch(setAllSubCategory(sortedSubCategories));
@@ -96,16 +92,8 @@ function App() {
    * Initial App Data
    */
   useEffect(() => {
-    Promise.all([
-      fetchUser(),
-      fetchCategories(),
-      fetchSubCategories(),
-    ]);
-  }, [
-    fetchUser,
-    fetchCategories,
-    fetchSubCategories,
-  ]);
+    Promise.all([fetchUser(), fetchCategories(), fetchSubCategories()]);
+  }, [fetchUser, fetchCategories, fetchSubCategories]);
 
   return (
     <GlobalProvider>
@@ -119,9 +107,7 @@ function App() {
 
       <Toaster position="top-right" reverseOrder={false} />
 
-      {location.pathname !== "/checkout" && (
-        <CartMobileLink />
-      )}
+      {location.pathname !== "/checkout" && <CartMobileLink />}
     </GlobalProvider>
   );
 }
