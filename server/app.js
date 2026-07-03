@@ -6,6 +6,7 @@ import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import morgan from "morgan";
 
+// Routes
 import userRouter from "./routes/user.route.js";
 import categoryRouter from "./routes/category.route.js";
 import uploadRouter from "./routes/upload.route.js";
@@ -28,13 +29,15 @@ app.use(
 );
 
 /* ==========================================================
-   CORS Configuration
+   CORS
 ========================================================== */
 
 app.use(
   cors({
     origin: process.env.FRONTEND_URL,
     credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
@@ -43,7 +46,12 @@ app.use(
 ========================================================== */
 
 app.use(express.json({ limit: "10mb" }));
-app.use(express.urlencoded({ extended: true, limit: "10mb" }));
+app.use(
+  express.urlencoded({
+    extended: true,
+    limit: "10mb",
+  })
+);
 
 /* ==========================================================
    Cookies
@@ -80,22 +88,24 @@ app.get("/", (req, res) => {
 ========================================================== */
 
 app.use("/api/user", userRouter);
-app.use("/api/category",categoryRouter)
-app.use("/api/file",uploadRouter)
-app.use("/api/subcategory",subCategoryRouter)
-app.use("/api/product",productRouter)
-app.use("/api/cart",cartRouter)
-app.use("/api/address",addressRouter)
-app.use('/api/order',orderRouter)
+app.use("/api/category", categoryRouter);
+app.use("/api/file", uploadRouter);
+app.use("/api/subcategory", subCategoryRouter);
+app.use("/api/product", productRouter);
+app.use("/api/cart", cartRouter);
+app.use("/api/address", addressRouter);
+app.use("/api/order", orderRouter);
 
 /* ==========================================================
-   404 Handler
+   404 Route
+   (Works in Express 4 & Express 5)
 ========================================================== */
 
-app.use("*", (req, res) => {
+app.use((req, res) => {
   return res.status(404).json({
     success: false,
-    message: "API route not found.",
+    error: true,
+    message: `Cannot ${req.method} ${req.originalUrl}`,
   });
 });
 
@@ -104,7 +114,7 @@ app.use("*", (req, res) => {
 ========================================================== */
 
 app.use((err, req, res, next) => {
-  console.error(err);
+  console.error("Global Error:", err);
 
   return res.status(err.status || 500).json({
     success: false,

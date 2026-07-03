@@ -1,5 +1,5 @@
 
-import Stripe from "../config/stripe.js";
+import Stripe from "../configs/stripe.js";
 import CartProductModel from "../models/cartproduct.model.js";
 import OrderModel from "../models/order.model.js";
 import UserModel from "../models/user.model.js";

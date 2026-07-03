@@ -14,7 +14,7 @@ import admin from "../middlewares/admin.middleware.js";
 
 const productRouter = Router();
 
-productRouter.post("/create", auth, admin, createProductController);
+productRouter.post("/create", authUser, admin, createProductController);
 productRouter.post("/get", getProductController);
 productRouter.post("/get-product-by-category", getProductByCategory);
 productRouter.post(
@@ -24,10 +24,10 @@ productRouter.post(
 productRouter.post("/get-product-details", getProductDetails);
 
 //update product
-productRouter.put("/update-product-details", auth, admin, updateProductDetails);
+productRouter.put("/update-product-details", authUser, admin, updateProductDetails);
 
 //delete product
-productRouter.delete("/delete-product", auth, admin, deleteProductDetails);
+productRouter.delete("/delete-product", authUser, admin, deleteProductDetails);
 
 //search product
 productRouter.post("/search-product", searchProduct);

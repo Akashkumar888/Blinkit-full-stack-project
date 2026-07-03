@@ -9,9 +9,9 @@ import {
 
 const orderRouter = Router();
 
-orderRouter.post("/cash-on-delivery", auth, CashOnDeliveryOrderController);
-orderRouter.post("/checkout", auth, paymentController);
+orderRouter.post("/cash-on-delivery", authUser, CashOnDeliveryOrderController);
+orderRouter.post("/checkout", authUser, paymentController);
 orderRouter.post("/webhook", webhookStripe);
-orderRouter.get("/order-list", auth, getOrderDetailsController);
+orderRouter.get("/order-list", authUser, getOrderDetailsController);
 
 export default orderRouter;

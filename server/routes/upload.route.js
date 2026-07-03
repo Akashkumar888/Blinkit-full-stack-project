@@ -7,7 +7,7 @@ const uploadRouter = Router();
 
 uploadRouter.post(
   "/upload",
-  auth,
+  authUser,
   upload.single("image"),
   uploadImageController,
 );

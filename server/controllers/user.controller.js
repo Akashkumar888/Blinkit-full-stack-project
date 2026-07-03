@@ -3,10 +3,10 @@ import userModel from "../models/user.model.js";
 import { validationResult } from "express-validator";
 import { verifyEmailTemplate } from "../utils/verifyEmailTemplate.js";
 import { generateAccessToken } from "../utils/generateAccessToken.util.js";
-import { generateRefreshToken } from "../utils/generateRefreshToken.util.js";
+import generateRefreshToken from "../utils/generateRefreshToken.util.js";
 import uploadImageCloudinary from "../utils/uploadImageCloudinary.util.js";
 import bcrypt from "bcryptjs";
-import { generateSixDigitsOtp } from "../utils/generateOtp.util.js";
+import { generateSixDigitOtp } from "../utils/generateOtp.util.js";
 import { forgotPasswordTemplate } from "../utils/forgotPasswordTemplate.js";
 import jwt from "jsonwebtoken";
 
@@ -282,7 +282,7 @@ export const forgotPassowrdController = async (req, res) => {
     }
 
     // Generate OTP
-    const otp = generateSixDigitsOtp();
+    const otp = generateSixDigitOtp();
 
     // Set expiry time = 1 hour
     const expireTime = new Date(Date.now() + 60 * 60 * 1000);

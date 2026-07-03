@@ -2,16 +2,16 @@ import { Router } from "express";
 import { authUser } from "../middlewares/authUser.middleware.js";
 import {
   addAddressController,
-  deleteAddresscontroller,
+  deleteAddressController,
   getAddressController,
   updateAddressController,
 } from "../controllers/address.controller.js";
 
 const addressRouter = Router();
 
-addressRouter.post("/create", auth, addAddressController);
-addressRouter.get("/get", auth, getAddressController);
-addressRouter.put("/update", auth, updateAddressController);
-addressRouter.delete("/disable", auth, deleteAddresscontroller);
+addressRouter.post("/create", authUser, addAddressController);
+addressRouter.get("/get", authUser, getAddressController);
+addressRouter.put("/update", authUser, updateAddressController);
+addressRouter.delete("/disable", authUser, deleteAddressController);
 
 export default addressRouter;
