@@ -23,7 +23,7 @@ const Search = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [isMobile] = useMobile();
+   const { isMobile } = useMobile();
 
   const isSearchPage =
     location.pathname === "/search";

@@ -273,9 +273,10 @@ const Login = () => {
           <Link
             to="/register"
             className="
+              cursor-pointer
               font-semibold
               text-green-700
-              hover:text-green-800
+              hover:text-green-800 
             "
           >
             Register

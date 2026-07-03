@@ -14,7 +14,10 @@ import AxiosToastError from "../utils/AxiosToastError";
 import { pricewithDiscount } from "../utils/PriceWithDiscount";
 
 import { setCartItems } from "../store/cartSlice";
-import { setAddressList } from "../store/addressSlice";
+import {
+  setAddressList,
+  clearAddressList,
+} from "../store/addressSlice";
 import { setOrder } from "../store/orderSlice";
 
 export const GlobalContext = createContext(null);
@@ -135,7 +138,7 @@ const GlobalProvider = ({ children }) => {
     localStorage.clear();
 
     dispatch(setCartItems([]));
-    dispatch(handleAddAddress([]));
+    dispatch(clearAddressList());
     dispatch(setOrder([]));
   }, [dispatch]);
 

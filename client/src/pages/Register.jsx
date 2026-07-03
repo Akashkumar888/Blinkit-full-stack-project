@@ -13,8 +13,7 @@ const Register = () => {
   const [loading, setLoading] = useState(false);
 
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] =
-    useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -32,19 +31,14 @@ const Register = () => {
     }));
   }, []);
 
-  const isValid =
-    Object.values(formData).every(Boolean);
+  const isValid = Object.values(formData).every(Boolean);
 
   const handleSubmit = useCallback(
     async (e) => {
       e.preventDefault();
 
-      if (
-        formData.password !== formData.confirmPassword
-      ) {
-        toast.error(
-          "Password and Confirm Password must be the same."
-        );
+      if (formData.password !== formData.confirmPassword) {
+        toast.error("Password and Confirm Password must be the same.");
         return;
       }
 
@@ -76,33 +70,23 @@ const Register = () => {
         setLoading(false);
       }
     },
-    [formData, navigate]
+    [formData, navigate],
   );
 
   return (
     <section className="container mx-auto w-full px-2">
       <div className="bg-white rounded p-7 my-4 mx-auto w-full max-w-lg">
-
-        <h2 className="text-2xl font-semibold">
-          Welcome to Binkeyit
-        </h2>
+        <h2 className="text-2xl font-semibold">Welcome to Binkeyit</h2>
 
         <p className="text-neutral-500 mt-1">
           Create your account to continue.
         </p>
 
-        <form
-          onSubmit={handleSubmit}
-          className="grid gap-5 mt-6"
-        >
-
+        <form onSubmit={handleSubmit} className="grid gap-5 mt-6">
           {/* Name */}
 
           <div className="grid gap-1">
-            <label
-              htmlFor="name"
-              className="font-medium"
-            >
+            <label htmlFor="name" className="font-medium">
               Name
             </label>
 
@@ -122,10 +106,7 @@ const Register = () => {
           {/* Email */}
 
           <div className="grid gap-1">
-            <label
-              htmlFor="email"
-              className="font-medium"
-            >
+            <label htmlFor="email" className="font-medium">
               Email
             </label>
 
@@ -144,21 +125,15 @@ const Register = () => {
           {/* Password */}
 
           <div className="grid gap-1">
-            <label
-              htmlFor="password"
-              className="font-medium"
-            >
+            <label htmlFor="password" className="font-medium">
               Password
             </label>
 
             <div className="bg-blue-50 border rounded flex items-center px-2 focus-within:border-primary-200">
-
               <input
                 id="password"
                 name="password"
-                type={
-                  showPassword ? "text" : "password"
-                }
+                type={showPassword ? "text" : "password"}
                 required
                 value={formData.password}
                 onChange={handleChange}
@@ -168,41 +143,26 @@ const Register = () => {
 
               <button
                 type="button"
-                onClick={() =>
-                  setShowPassword((prev) => !prev)
-                }
+                onClick={() => setShowPassword((prev) => !prev)}
                 className="cursor-pointer text-neutral-600"
               >
-                {showPassword ? (
-                  <FaRegEye />
-                ) : (
-                  <FaRegEyeSlash />
-                )}
+                {showPassword ? <FaRegEye /> : <FaRegEyeSlash />}
               </button>
-
             </div>
           </div>
 
           {/* Confirm Password */}
 
           <div className="grid gap-1">
-            <label
-              htmlFor="confirmPassword"
-              className="font-medium"
-            >
+            <label htmlFor="confirmPassword" className="font-medium">
               Confirm Password
             </label>
 
             <div className="bg-blue-50 border rounded flex items-center px-2 focus-within:border-primary-200">
-
               <input
                 id="confirmPassword"
                 name="confirmPassword"
-                type={
-                  showConfirmPassword
-                    ? "text"
-                    : "password"
-                }
+                type={showConfirmPassword ? "text" : "password"}
                 required
                 value={formData.confirmPassword}
                 onChange={handleChange}
@@ -212,20 +172,11 @@ const Register = () => {
 
               <button
                 type="button"
-                onClick={() =>
-                  setShowConfirmPassword(
-                    (prev) => !prev
-                  )
-                }
+                onClick={() => setShowConfirmPassword((prev) => !prev)}
                 className="cursor-pointer text-neutral-600"
               >
-                {showConfirmPassword ? (
-                  <FaRegEye />
-                ) : (
-                  <FaRegEyeSlash />
-                )}
+                {showConfirmPassword ? <FaRegEye /> : <FaRegEyeSlash />}
               </button>
-
             </div>
           </div>
 
@@ -250,19 +201,17 @@ const Register = () => {
           >
             {loading ? "Creating Account..." : "Register"}
           </button>
-
         </form>
 
         <p className="mt-5 text-sm">
           Already have an account?{" "}
           <Link
             to="/login"
-            className="font-semibold text-green-700 hover:text-green-800"
+            className="font-semibold text-green-700 hover:text-green-800 cursor-pointer"
           >
             Login
           </Link>
         </p>
-
       </div>
     </section>
   );
